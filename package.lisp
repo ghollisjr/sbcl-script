@@ -15,6 +15,7 @@
    ;; files
    :mktemp
    :with-temp
+   :tmppath
    ;; running commands
    :run
    :start
