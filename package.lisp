@@ -12,6 +12,7 @@
    :exe
    :exebg
    :with-interrupt
+   :whitespace-p
    ;; files
    :mktemp
    :with-temp

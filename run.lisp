@@ -28,24 +28,33 @@
             &key
               input)
   (let* ((outstr "")
-         (errstr ""))
+         (errstr "")
+         (retval 0))
     (setf
      outstr
      (with-output-to-string (stdout)
        (setf
         errstr
         (with-output-to-string (stderr)
-          (apply #'sb-ext:run-program
-                 "/usr/bin/env"
-                 (list* command
-                        arguments)
-                 :output stdout
-                 :error stderr
-                 (when input
-                   (list :input input)))))))
+          (setf retval
+                (sb-ext:process-exit-code
+                 (apply #'sb-ext:run-program
+                        "/usr/bin/env"
+                        (list* command
+                               arguments)
+                        :output stdout
+                        :error stderr
+                        (when input
+                          (list :input input)))))))))
     (when (not (string= errstr ""))
       (error "run error: ~a" errstr))
-    (values outstr errstr)))
+    (values outstr errstr retval)))
+
+(defmacro and-run (&rest runs)
+  "Executes external processes until one returns a non-zero exit
+code."
+  )
+          
 
 ;; Read macro for shell-like command execution
 (defun run-reader-macro (stream subchar arg)
