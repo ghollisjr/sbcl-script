@@ -17,6 +17,8 @@
    :mktemp
    :with-temp
    :tmppath
+   :make-directory-pathname
+   :subpath
    ;; running commands
    :run
    :start

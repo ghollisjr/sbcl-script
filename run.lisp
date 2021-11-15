@@ -26,6 +26,7 @@
 
 (defun run (command arguments
             &key
+              show-output
               input)
   (let* ((outstr "")
          (errstr "")
@@ -42,8 +43,12 @@
                         "/usr/bin/env"
                         (list* command
                                arguments)
-                        :output stdout
-                        :error stderr
+                        :output (if show-output
+                                    *standard-output*
+                                    stdout)
+                        :error (if show-output
+                                   *standard-output*
+                                   stderr)
                         (when input
                           (list :input input)))))))))
     (when (not (string= errstr ""))

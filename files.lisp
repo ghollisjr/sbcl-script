@@ -11,6 +11,25 @@
       (butnewline
        (run "mktemp" nil))))
 
+(defun make-directory-pathname (path)
+  "Returns path to directory for given pathname, ensuring that all
+parts of the pathname are treated as the directory."
+  (let* ((p (pathname path))
+         (name (pathname-name p))
+         (type (pathname-type p))
+         (dir (pathname-directory p))
+         (basepath (make-pathname :name name
+                                  :type type))
+         (basename (namestring basepath)))
+    (merge-pathnames
+     (make-pathname :directory (list :relative basename))
+     (make-pathname :directory dir))))
+
+(defun subpath (relpath dirpath)
+  "Returns pathname for relative path below dirpath"
+  (let* ((dirpath (make-directory-pathname dirpath)))
+    (merge-pathnames relpath dirpath)))
+
 (defmacro with-temp ((path &optional directory-p) &body body)
   "Creates temporary or directory and binds the supplied path symbol
 to the value of the path string during the execution of the supplied
