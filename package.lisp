@@ -19,6 +19,7 @@
    :tmppath
    :make-directory-pathname
    :subpath
+   :homepath
    ;; running commands
    :run
    :start

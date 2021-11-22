@@ -56,3 +56,10 @@ E.g.: (let ((x \"test.txt\")) (tmppath \"~a\" x))
             `(cl-fad:delete-directory-and-files ,path)
             `(delete-file ,path))
        ,result)))
+
+(defun homepath (&rest format-args)
+  "Returns subpath with home directory as the implicit dirpath."
+  (namestring
+   (subpath (apply #'format nil format-args)
+            (make-directory-pathname
+             (sb-posix:getenv "HOME")))))
