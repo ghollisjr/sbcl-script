@@ -19,7 +19,7 @@
                do
                  (format s "(ql:quickload ~s) "
                          package))
-            (format s "(push :sbcl-script *features*) (sb-ext:save-lisp-and-die ~s :compression nil)"
+            (format s "(push :script *features*) (sb-ext:save-lisp-and-die ~s :compression nil)"
                     corefile))))
     (with-input-from-string (s command)
       (sb-ext:run-program "/usr/bin/env"

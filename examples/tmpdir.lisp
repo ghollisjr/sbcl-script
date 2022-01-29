@@ -6,6 +6,7 @@
 (in-package :sbcl-script)
 
 (when (script-p) ; Similar to Python's if __name__ == "__main__":
+  ;; could have also done (when (member :script *features*) ...)
   (with-temp (tmpdir t)
     (with-open-file (f (tmppath "test.txt")
                        :direction :output

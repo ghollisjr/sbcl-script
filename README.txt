@@ -22,11 +22,11 @@ configured for scripting (see below), quicklisp, run "make" and then
 "cd" into the examples/ directory if you want to try out the examples.
 
 The make-sbcl-core script makes use of the *features* variable to add
-:sbcl-script to the features list.  This is useful for the #'script-p
-function, which checks for this feature.  If the only place this
-feature is enabled is in cores, then you can exploit the Python-like
-script-library duality for files.  E.g., in Python you might do
-something like
+:script to the features list.  This can be checked directly or with
+the #'script-p function, which checks for this feature.  If the only
+place this feature is enabled is in cores, then you can exploit the
+Python-like script-library duality for files.  E.g., in Python you
+might do something like
 
 if __name__ == "__main__":
    ...
