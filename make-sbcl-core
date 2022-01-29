@@ -1,0 +1,28 @@
+#!/usr/bin/env -S sbcl --script
+(defun safe-string (s)
+  (remove-if (lambda (c)
+               (char= c #\#))
+             s))
+
+(let* ((args (rest sb-ext:*posix-argv*)))
+  (when (not (= (length args) 2))
+    (format *error-output*
+            "Usage: make-sbcl-core <packages-lisp-list> <core-out-file>~%~%Note that hash symbols (#) will be removed from input to~%protect against read time execution exploits.~%")
+    (sb-ext:quit))
+  (let* ((packages (read-from-string (safe-string (first args))
+                                     nil nil))
+         (corefile (second args))
+         (command
+          (with-output-to-string (s)
+            (loop
+               for package in packages
+               do
+                 (format s "(ql:quickload ~s) "
+                         package))
+            (format s "(push :sbcl-script *features*) (sb-ext:save-lisp-and-die ~s :compression nil)"
+                    corefile))))
+    (with-input-from-string (s command)
+      (sb-ext:run-program "/usr/bin/env"
+                          (list "sbcl")
+                          :input s
+                          :output *standard-output*))))

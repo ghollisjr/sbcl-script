@@ -17,12 +17,44 @@ Dependencies:
 * external-program (https://github.com/sellout/external-program)
 * cl-options (https://www.github.com/ghollisjr/cl-options)
 
-Make sure you have SBCL configured for scripting, quicklisp, run
-"make" and then "cd" into the examples/ directory if you want to try
-out the examples.
+Make sure if you're using an old version of SBCL that you have it
+configured for scripting (see below), quicklisp, run "make" and then
+"cd" into the examples/ directory if you want to try out the examples.
 
-To configure SBCL for scripting, see the manual or do something like
-this in your .sbclrc file:
+The make-sbcl-core script makes use of the *features* variable to add
+:sbcl-script to the features list.  This is useful for the #'script-p
+function, which checks for this feature.  If the only place this
+feature is enabled is in cores, then you can exploit the Python-like
+script-library duality for files.  E.g., in Python you might do
+something like
+
+if __name__ == "__main__":
+   ...
+
+at the bottom of a script that you also want to use as a library.
+This would be accomplished like
+
+(when (sbcl-script:script-p)
+  ...)
+
+if a make-sbcl-core core file were loaded.  See build-sbcl-core.sh for
+an example of how to use make-sbcl-core.  I recommend placing
+make-sbcl-core somewhere in your $PATH variable to make building
+script cores easier.
+
+In order to allow scripts to be loaded as ordinary Lisp files, you
+will need to at least add this to your .sbclrc file:
+
+----------------------------------------------------------------------
+(set-dispatch-macro-character
+ #\# #\!
+ (lambda (stream char arg)
+   (declare (ignore char arg))
+   (read-line stream)))
+----------------------------------------------------------------------
+
+To configure SBCL for scripting if using a particularly old version of
+SBCL, see the manual or do something like this in your .sbclrc file:
 
 ;;; If the first user-processable command-line argument is a filename,
 ;;;disable the debugger, load the file handling shebang-line and quit.
