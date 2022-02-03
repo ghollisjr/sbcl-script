@@ -7,6 +7,7 @@
                  #:uiop)
     :components
     ((:file "package")
+     (:file "strings")
      (:file "env")
      (:file "files")
      (:file "run")))

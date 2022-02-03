@@ -13,6 +13,8 @@
    :exebg
    :with-interrupt
    :whitespace-p
+   :safe-string
+   :safe-read-from-string
    ;; files
    :mktemp
    :with-temp
