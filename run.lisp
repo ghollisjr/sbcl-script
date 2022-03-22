@@ -43,6 +43,7 @@
                         "/usr/bin/env"
                         (list* command
                                arguments)
+                        :external-format :iso-8859-1
                         :output (if show-output
                                     *standard-output*
                                     stdout)
