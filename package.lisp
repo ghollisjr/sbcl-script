@@ -26,4 +26,7 @@
    :run
    :start
    :enable-run-reader-macro
+   ;; error handling
+   :run-error
+   :ignore-error
    ))

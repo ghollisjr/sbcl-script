@@ -24,6 +24,10 @@
         (subseq string 0 (1- (length string)))
         string)))
 
+(define-condition run-error ()
+  ((stderr :initarg :stderr :reader run-error-stderr)
+   (stdout :initarg :stdout :reader run-error-stdout)))
+
 (defun run (command arguments
             &key
               (external-format :utf-8)
@@ -32,36 +36,39 @@
   (let* ((outstr "")
          (errstr "")
          (retval 0))
-    (setf
-     outstr
-     (with-output-to-string (stdout)
-       (setf
-        errstr
-        (with-output-to-string (stderr)
-          (setf retval
-                (sb-ext:process-exit-code
-                 (apply #'sb-ext:run-program
-                        "/usr/bin/env"
-                        (list* command
-                               arguments)
-                        :external-format external-format ;; :iso-8859-1
-                        :output (if show-output
-                                    *standard-output*
-                                    stdout)
-                        :error (if show-output
-                                   *standard-output*
-                                   stderr)
-                        (when input
-                          (list :input input)))))))))
-    (when (not (string= errstr ""))
-      (error "run error: ~a" errstr))
-    (values outstr errstr retval)))
+    (restart-case
+        (progn
+          (setf
+           outstr
+           (with-output-to-string (stdout)
+             (setf
+              errstr
+              (with-output-to-string (stderr)
+                (setf retval
+                      (sb-ext:process-exit-code
+                       (apply #'sb-ext:run-program
+                              "/usr/bin/env"
+                              (list* command
+                                     arguments)
+                              :external-format external-format ;; :iso-8859-1
+                              :output (if show-output
+                                          *standard-output*
+                                          stdout)
+                              :error (if show-output
+                                         *standard-output*
+                                         stderr)
+                              (when input
+                                (list :input input)))))))))
+          (when (not (string= errstr ""))
+            (error 'run-error :stderr errstr :stdout outstr))
+          (values outstr errstr retval))
+      (ignore-error () (values outstr errstr retval)))))
 
 (defmacro and-run (&rest runs)
   "Executes external processes until one returns a non-zero exit
 code."
   )
-          
+
 
 ;; Read macro for shell-like command execution
 (defun run-reader-macro (stream subchar arg)
