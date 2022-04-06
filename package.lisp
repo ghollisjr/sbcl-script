@@ -1,6 +1,7 @@
 (defpackage #:sbcl-script
   (:use :cl
-        :cl-getopt)
+        :cl-getopt
+        :dlist)
   (:import-from :sb-posix
                 :chdir
                 :getcwd)

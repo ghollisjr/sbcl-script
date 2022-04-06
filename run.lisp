@@ -55,11 +55,11 @@
                                           *standard-output*
                                           stdout)
                               :error (if show-output
-                                         *standard-output*
+                                         *error-output*
                                          stderr)
                               (when input
                                 (list :input input)))))))))
-          (when (not (string= errstr ""))
+          (when (not (zerop retval))
             (error 'run-error :stderr errstr :stdout outstr))
           (values outstr errstr retval))
       (ignore-error () (values outstr errstr retval)))))
@@ -117,3 +117,77 @@ code."
 (defun enable-run-reader-macro ()
   (set-dispatch-macro-character
    #\# #\r #'run-reader-macro))
+
+(defun read-entire-stream (stream)
+  "Reads all characters from stream and returns string."
+  (let* ((result nil))
+    (loop
+       for c = (read-char stream nil nil)
+       while c
+       do (dlist-push c result :at-end t))
+    (coerce result 'string)))
+
+
+(defun pipe (commands
+             &key
+               (external-format :utf-8)
+               show-output
+               input)
+  "Executes chain of commands with inputs & outputs piped together.
+Each command is of the form (program args &key stderr-p) where non-NIL
+stderr-p results in the stderr output being combined with stdout
+before piping.
+
+NOTE: I have been unable to directly use pipes due to the way SBCL
+handles program I/O.  It appears that sb-ext:run-program does not
+gracefully handle a file descriptor closing while it reads from the
+file descriptor, so trying to use a cl-plumbing::pipe causes an EOF
+error if the pipe gets closed or an eternal hang since the pipe can't
+be closed.  This causes woeful inefficiency for this pipe function,
+but it's still useful for many tasks."
+  (let* ((stdout "")
+         (stderr "")
+         (retval 0)
+         (n (length commands))
+         (proc nil))
+    (when (= n 1)
+      (return-from pipe
+        (run (first (first commands))
+             (second (first commands))
+             :external-format external-format
+             :show-output show-output
+             :input input)))
+    (loop
+       for c in commands
+       for i from 1
+       do
+         (with-input-from-string (si stdout)
+           (setf stdout
+                 (with-output-to-string (so)
+                   (setf stderr
+                         (with-output-to-string (se)
+                           (destructuring-bind (program args &key stderr-p)
+                               c
+                             (setf proc
+                                   (apply #'sb-ext:run-program
+                                          "/usr/bin/env"
+                                          (list*
+                                           (list* program
+                                                  args)
+                                           :wait t
+                                           :output
+                                           (if  (and (= i n)
+                                                     show-output)
+                                                *standard-output*
+                                                so)
+                                           :external-format external-format
+                                           (append
+                                            (when (> i 1)
+                                              (list :input si))
+                                            (when (or stderr-p
+                                                      (and show-output
+                                                           (= i n)))
+                                              (list :error se))))))
+                             (setf retval
+                                   (sb-ext:process-exit-code proc)))))))))
+    (values stdout stderr retval)))

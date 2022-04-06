@@ -1,0 +1,24 @@
+* 2022-04-05: I've forked cl-plumbing to
+  https://github.com/ghollisjr/cl-plumbing due to it lacking necessary
+  stream methods and created a pull request.  The repo looks pretty
+  stale, so if there's no word from the original maintainer then I'll
+  request Quicklisp to point to my fork and continue maintaining the
+  repo as needed.
+
+  UPDATE: It turns out that cl-plumbing is extremely slow for these
+  purposes as implemented.  See plumbing-test.lisp for benchmarking
+  examples.  I have a feeling it's due to the (sleep ...) calls in the
+  code since it hasn't been updated to use bordeaux-threads
+  conditions.
+
+* POSIX systems typically support pipes with file descriptors
+  directly, so if it's possible to create some basic file descriptor
+  streams in SBCL without any Lisp-side processing then this would be
+  the most efficient way to implement the #'pipe function.
+
+* I'm finding that the largest bottle neck for #'pipe and #'run seems
+  to be SBCL's sb-ext:run-program being slow.  E.g., running "ls" 5
+  times in BASH versus SBCL results in the following times:
+
+  SBCL: 0.163 seconds
+  BASH: 0.130 seconds
