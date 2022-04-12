@@ -4,6 +4,7 @@
     :license "GPLv3"
     :depends-on (#:cl-getopt
                  #:cl-fad
+                 #:str
                  #:dlist
                  #:uiop)
     :components
