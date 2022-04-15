@@ -16,6 +16,7 @@
    :whitespace-p
    :safe-string
    :safe-read-from-string
+   :wrap-string
    ;; files
    :mktemp
    :with-temp

@@ -11,3 +11,16 @@ to string and the read-args that follow."
   (apply #'read-from-string
          (safe-string string)
          read-args))
+
+(defun wrap-string (string &optional (width 72))
+  "Wraps string of words for use in console output."
+  (if width
+      (format nil
+              (concatenate 'string
+                           "~{~<~%~1,"
+                           (format nil "~a" width)
+                           ":;~a~>~^ ~}")
+              (str:words string))
+      (format nil
+              "~{~<~%~1:;~a~>~^ ~}"
+              (str:words string))))
