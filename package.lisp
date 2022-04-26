@@ -24,6 +24,7 @@
    :make-directory-pathname
    :subpath
    :homepath
+   :read-entire-stream
    ;; running commands
    :run
    :start
