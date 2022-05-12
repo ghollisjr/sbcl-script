@@ -35,7 +35,8 @@
               input)
   (let* ((outstr "")
          (errstr "")
-         (retval 0))
+         (retval 0)
+         (proc nil))
     (restart-case
         (progn
           (setf
@@ -44,24 +45,32 @@
              (setf
               errstr
               (with-output-to-string (stderr)
+                (setf proc
+                      (apply #'sb-ext:run-program
+                             "/usr/bin/env"
+                             (list* command
+                                    arguments)
+                             :external-format external-format ;; :iso-8859-1
+                             :output (if show-output
+                                         *standard-output*
+                                         stdout)
+                             :error (if show-output
+                                        *error-output*
+                                        stderr)
+                             :wait nil
+                             (when input
+                               (list :input input))))
+                (sb-ext:process-wait proc)
                 (setf retval
                       (sb-ext:process-exit-code
-                       (apply #'sb-ext:run-program
-                              "/usr/bin/env"
-                              (list* command
-                                     arguments)
-                              :external-format external-format ;; :iso-8859-1
-                              :output (if show-output
-                                          *standard-output*
-                                          stdout)
-                              :error (if show-output
-                                         *error-output*
-                                         stderr)
-                              (when input
-                                (list :input input)))))))))
+                       proc))
+                (sb-ext:process-close proc)))))
           (when (not (zerop retval))
             (error 'run-error :stderr errstr :stdout outstr))
           (values outstr errstr retval))
+      (abort ()
+        (sb-ext:process-kill proc 9 :process-group)
+        (sb-ext:process-close proc))
       (ignore-error () (values outstr errstr retval)))))
 
 (defmacro and-run (&rest runs)
