@@ -7,9 +7,9 @@
 (defun read-stream (stream)
   (let* ((result nil))
     (loop
-       for c = (read-char stream nil nil)
-       while c
-       do (push c result))
+      for c = (read-char stream nil nil)
+      while c
+      do (push c result))
     (buf->string result)))
 
 (defun whitespace-p (c)
@@ -84,34 +84,34 @@ code."
   (let* ((buffer nil)
          (start (read-char stream nil nil))
          (end
-          (cond
-            ((null start)
-             #\))
-            ((char= start #\()
-             #\))
-            ((char= start #\")
-             #\")
-            ((char= start #\')
-             #\'))))
+           (cond
+             ((null start)
+              #\))
+             ((char= start #\()
+              #\))
+             ((char= start #\")
+              #\")
+             ((char= start #\')
+              #\'))))
     (loop
-       for c = (read-char stream nil nil)
-       while (and c
-                  (not (char= c end)))
-       do (push c buffer))
+      for c = (read-char stream nil nil)
+      while (and c
+                 (not (char= c end)))
+      do (push c buffer))
     (let* ((str (buf->string buffer))
            (terms nil)
            (term nil)
            (command-list
-            (loop
+             (loop
                for c across str
                do
-                 (cond
-                   ((whitespace-p c)
-                    (when term
-                      (push (buf->string term) terms)
-                      (setf term nil)))
-                   (t
-                    (push c term)))
+                  (cond
+                    ((whitespace-p c)
+                     (when term
+                       (push (buf->string term) terms)
+                       (setf term nil)))
+                    (t
+                     (push c term)))
                finally (progn
                          (when term
                            (push (buf->string term) terms))
@@ -131,9 +131,9 @@ code."
   "Reads all characters from stream and returns string."
   (let* ((result nil))
     (loop
-       for c = (read-char stream nil nil)
-       while c
-       do (dlist-push c result :at-end t))
+      for c = (read-char stream nil nil)
+      while c
+      do (dlist-push c result :at-end t))
     (coerce result 'string)))
 
 
@@ -167,9 +167,9 @@ but it's still useful for many tasks."
              :show-output show-output
              :input input)))
     (loop
-       for c in commands
-       for i from 1
-       do
+      for c in commands
+      for i from 1
+      do
          (with-input-from-string (si stdout)
            (setf stdout
                  (with-output-to-string (so)
