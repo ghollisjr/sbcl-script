@@ -2,12 +2,26 @@
   (:use :cl
         :cl-getopt
         :dlist)
-  (:import-from :sb-posix
-                :chdir
-                :getcwd)
+  (:import-from
+   :sb-posix
+   :chdir
+   :getcwd)
+  (:import-from
+   :uiop
+   :ensure-directory-pathname
+   :delete-directory-tree
+   :delete-empty-directory
+   :delete-file-if-exists)
   (:export
+   ;; sb-posix
    :chdir
    :getcwd
+   ;; uiop
+   :ensure-directory-pathname
+   :delete-directory-tree
+   :delete-empty-directory
+   :delete-file-if-exists
+   ;; sbcl-script
    :getopt
    :option-descriptions
    :exe

@@ -12,8 +12,10 @@
        (run "mktemp" nil))))
 
 (defun make-directory-pathname (path)
-  "Returns path to directory for given pathname, ensuring that all
-parts of the pathname are treated as the directory."
+  "Returns path to directory for given pathname, ensuring that all parts
+of the pathname are treated as the directory.  NOTE: This is
+deprecated, as uiop:ensure-directory-pathname already provides this
+functionality."
   (let* ((p (pathname path))
          (name (pathname-name p))
          (type (pathname-type p))
@@ -26,8 +28,10 @@ parts of the pathname are treated as the directory."
      (make-pathname :directory dir))))
 
 (defun subpath (relpath dirpath)
-  "Returns pathname for relative path below dirpath"
-  (let* ((dirpath (make-directory-pathname dirpath)))
+  "Returns pathname for relative path below dirpath.  Slightly more
+convenient than merge-pathnames since it uses
+#'uiop:ensure-directory-pathname."
+  (let* ((dirpath (ensure-directory-pathname dirpath)))
     (merge-pathnames relpath dirpath)))
 
 (defmacro with-temp ((path &optional directory-p) &body body)
@@ -61,5 +65,5 @@ E.g.: (let ((x \"test.txt\")) (tmppath \"~a\" x))
   "Returns subpath with home directory as the implicit dirpath."
   (namestring
    (subpath (apply #'format nil format-args)
-            (make-directory-pathname
+            (ensure-directory-pathname
              (sb-posix:getenv "HOME")))))
