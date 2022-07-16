@@ -34,7 +34,7 @@ if __name__ == "__main__":
 at the bottom of a script that you also want to use as a library.
 This would be accomplished like
 
-(when (sbcl-script:script-p)
+(when (member :script *features*) ; also (sbcl-script:script-p)
   ...)
 
 if a make-sbcl-core core file were loaded.  See build-sbcl-core.sh for
