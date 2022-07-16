@@ -28,11 +28,14 @@
   ((stderr :initarg :stderr :reader run-error-stderr)
    (stdout :initarg :stdout :reader run-error-stdout)))
 
-(defun run (command arguments
+(defun run (command &optional arguments
             &key
               (external-format :utf-8)
               show-output
               input)
+  "Runs program synchronously, returning output string as first result
+unleses show-output is non-NIL, in which case output is printed to
+*standard-output*."
   (let* ((outstr "")
          (errstr "")
          (retval 0)
