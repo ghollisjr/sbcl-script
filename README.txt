@@ -34,6 +34,11 @@ if __name__ == "__main__":
 at the bottom of a script that you also want to use as a library.
 This would be accomplished like
 
+#+script
+(some code to run as script executable)
+
+or equivalently
+
 (when (member :script *features*) ; also (sbcl-script:script-p)
   ...)
 
