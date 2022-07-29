@@ -2,6 +2,24 @@ sbcl-script is a Common Lisp library to make writing scripts easier
 with SBCL.  If you like using a different Lisp implementation, you
 might find some of this code useful.
 
+The driving ideas of sbcl-script:
+
+* Common Lisp out-of-the-box is not all that convenient for writing
+  scripts that would e.g. replace or extend a shell script.
+
+* With appropriate libraries and macros, Lisp scripts should be as
+  easy or easier to write than shell scripts and should have better
+  performance.
+
+* The operating system exists, and Lisp benefits from knowing about
+  it.
+
+* make-sbcl-core: Building & installing Lisp binaries is less
+  convenient than building C binaries, and would benefit from build
+  tools that can be called outside of a Lisp image.  make-sbcl-core
+  provides this via a convenient way of generating core files given a
+  list of dependencies to load via quicklisp.
+
 I started this project with the goal of making an
 implementation-agnostic scripting library but I ran into a dead end
 when it came to a fully equipped external program execution library
