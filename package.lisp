@@ -46,4 +46,5 @@
    ;; error handling
    :run-error
    :ignore-error
+   :abort-run
    ))

@@ -71,7 +71,7 @@ unleses show-output is non-NIL, in which case output is printed to
           (when (not (zerop retval))
             (error 'run-error :stderr errstr :stdout outstr))
           (values outstr errstr retval))
-      (abort ()
+      (abort-run ()
         (sb-ext:process-kill proc 9 :process-group)
         (sb-ext:process-close proc))
       (ignore-error () (values outstr errstr retval)))))
